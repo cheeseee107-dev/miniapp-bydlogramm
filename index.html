@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Мессенджер</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            background-color: var(--tg-theme-secondary-bg-color, #f1f1f2);
+            color: var(--tg-theme-text-color, #222222);
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', Roboto, Helvetica, sans-serif;
+            padding: 16px;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        .card {
+            background-color: var(--tg-theme-bg-color, #ffffff);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        h3 {
+            margin: 0 0 16px 0;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(0,0,0,0.1);
+            background-color: var(--tg-theme-secondary-bg-color, #f1f1f2);
+            color: var(--tg-theme-text-color, #222222);
+            font-size: 16px;
+            outline: none;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+        input:focus, textarea:focus {
+            border-color: var(--tg-theme-button-color, #3390ec);
+        }
+        textarea {
+            resize: none;
+            min-height: 80px;
+        }
+        button {
+            background-color: var(--tg-theme-button-color, #3390ec);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            border: none;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 17px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+        button:active {
+            transform: scale(0.96);
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h3>Мой профиль</h3>
+        <input type="text" id="myNick" placeholder="Придумай крутой никнейм">
+        <textarea id="myBio" placeholder="Напиши пару слов о себе..."></textarea>
+        <button id="saveProfileBtn">Сохранить</button>
+    </div>
+
+    <div class="card">
+        <h3>Начать диалог</h3>
+        <input type="text" id="friendNick" placeholder="Никнейм собеседника">
+        <button id="connectBtn">Подключиться</button>
+    </div>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+
+        document.getElementById("saveProfileBtn").addEventListener("click", () => {
+            tg.HapticFeedback.impactOccurred('light');
+            let nick = document.getElementById("myNick").value.trim();
+            let bio = document.getElementById("myBio").value.trim();
+            
+            if (!nick) {
+                tg.showAlert("Никнейм обязателен, иначе как тебя найдут?");
+                return;
+            }
+            
+            tg.sendData(JSON.stringify({ action: "save_profile", nick: nick, bio: bio }));
+            tg.close();
+        });
+
+        document.getElementById("connectBtn").addEventListener("click", () => {
+            tg.HapticFeedback.impactOccurred('light');
+            let friendNick = document.getElementById("friendNick").value.trim();
+            
+            if (!friendNick) {
+                tg.showAlert("Укажи никнейм человека, к которому хочешь подключиться.");
+                return;
+            }
+            
+            tg.sendData(JSON.stringify({ action: "connect", target_nick: friendNick }));
+            tg.close();
+        });
+    </script>
+
+</body>
+</html>
